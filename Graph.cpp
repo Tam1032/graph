@@ -39,36 +39,34 @@ bool Circle(int grid[MAX][MAX], int component, int visit[], int n){
 }
 void printCircle (int grid[MAX][MAX], int node, int n){
   bool *visited = new bool [n];
-  int circle1[MAX],circle2[MAX];
+  int circle[MAX];
   int circleIndex1=0,circleIndex2=0;
   for(int i=0;i<n;i++){
     visited[i]=false;
   }
-  int temp,pre=-1;
-  circle1[circleIndex1]=node;
-  circle2[circleIndex2]=node;
+  int temp,pre=-1,next;
+  circle[circleIndex1]=node;
   visited[node]=true;
   bool check =  true;
   while(circleIndex1!=-1){
-    temp=circle1[circleIndex1];
+    temp=circle[circleIndex1];
     check = true;
     for(int j=0;j<n;j++){
       if(grid[temp][j]==1){
         if(j!=pre){
           circleIndex1++;
-          circle1[circleIndex1]=j;
+          circle[circleIndex1]=j;
           grid[temp][j]=2;
           grid[j][temp]=2;
           if(visited[j]){
+            circleIndex2=circleIndex1-1;
             cout<<j<<"->";
-            for(int x = circleIndex2;circle2[x]!=j;x--){
-              cout<<circle2[x]<<"->";
+            for(int x = circleIndex2;circle[x]!=j;x--){
+              cout<<circle[x]<<"->";
             }
             cout<<j<<endl;
             circleIndex1--;
           }
-          circleIndex2++;
-          circle2[circleIndex2]=j;
           visited[j]=true;
           check = false;
           break;
@@ -76,8 +74,10 @@ void printCircle (int grid[MAX][MAX], int node, int n){
       }
     }
     pre=temp;
-    if(check)
+    if(check){
+
       circleIndex1--;
+    }
   }
   cout<<endl;
 }
