@@ -44,10 +44,13 @@ void printCircle (int grid[MAX][MAX], int node, int n){
   for(int i=0;i<n;i++){
     visited[i]=false;
   }
+  for (int i = 0; i < MAX; i++) {
+    circle[i]=-1;
+  }
   int temp,pre=-1,next;
   circle[circleIndex1]=node;
   visited[node]=true;
-  bool check =  true;
+  bool check;
   while(circleIndex1!=-1){
     temp=circle[circleIndex1];
     check = true;
@@ -75,7 +78,13 @@ void printCircle (int grid[MAX][MAX], int node, int n){
     }
     pre=temp;
     if(check){
-
+      if(circle[circleIndex1+1]!=-1){
+        next = circle[circleIndex1+1];
+        grid[temp][next]=1;
+        grid[next][temp]=1;
+        visited[next]=false;
+        circle[circleIndex1+1]=-1;
+      }
       circleIndex1--;
     }
   }
