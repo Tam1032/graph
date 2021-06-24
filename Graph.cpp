@@ -4,7 +4,7 @@ using namespace std;
 #define MAX 20
 void visit(int g[MAX][MAX], int n, int x, int label, int v[MAX]){
   v[x]=label;
-  cout<<x<<": "<<label<<endl;
+  //cout<<x<<": "<<label<<endl;
   for(int i=0;i<n;i++){
     if(v[i]==0&&(g[x][i]==1||g[i][x]==1))
       visit(g,n,i,label,v);
@@ -37,7 +37,16 @@ bool Circle(int grid[MAX][MAX], int component, int visit[], int n){
   }
   return false;
 }
-void printCircle (int grid[MAX][MAX], int node, int n){
+void DFS(int grid[MAX][MAX], bool visited[], int n, int start){
+  visited[start]=true;
+  cout<<start<<"\t";
+  for(int i = 0; i<n;i++){
+    if(!visited[i]&&grid[start][i]){
+      DFS(grid,visited,n,i);
+    }
+  }
+}
+/*void printCircle (int grid[MAX][MAX], int node, int n){
   bool *visited = new bool [n];
   int circle[MAX];
   int circleIndex1=0,circleIndex2=0;
@@ -53,6 +62,8 @@ void printCircle (int grid[MAX][MAX], int node, int n){
   bool check;
   while(circleIndex1!=-1){
     temp=circle[circleIndex1];
+    if(circleIndex1>0)
+      pre=circle[circleIndex1-1];
     check = true;
     for(int j=0;j<n;j++){
       if(grid[temp][j]==1){
@@ -76,7 +87,6 @@ void printCircle (int grid[MAX][MAX], int node, int n){
         }
       }
     }
-    pre=temp;
     if(check){
       if(circle[circleIndex1+1]!=-1){
         next = circle[circleIndex1+1];
@@ -89,11 +99,11 @@ void printCircle (int grid[MAX][MAX], int node, int n){
     }
   }
   cout<<endl;
-}
+}*/
 int main(){
   int graph[MAX][MAX];
   int n=8;
-  int visited[MAX]={0};
+  int visit[MAX]={0};
   for(int i=0;i<n;i++){
     for(int j=0;j<n;j++)
       graph[i][j]=0;
@@ -119,20 +129,18 @@ int main(){
     }
     cout<<endl;
   }
-  int component = tpLienThong(graph,n,visited);
+  int component = tpLienThong(graph,n,visit);
   cout<<"So thanh phan lien thong la: "<<component<<endl;
-  bool checkCircle =  Circle(graph,component,visited,n);
+  bool checkCircle =  Circle(graph,component,visit,n);
   if(checkCircle){
     cout<<"Do thi co chu trinh"<<endl;
-    printCircle(graph,0,n);
   }
   else
     cout<<"Do thi khong co chu trinh"<<endl;
+  bool *visited = new bool [n];
   for(int i=0;i<n;i++){
-    for(int j=0;j<n;j++){
-      cout<<graph[i][j]<<" ";
-    }
-    cout<<endl;
+    visited[i]=false;
   }
+  DFS(graph,visited,n,0);
   return 0;
 }
