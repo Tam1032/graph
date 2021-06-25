@@ -1,7 +1,68 @@
 #include <iostream>
-#include <stack>
+#include <list>
 using namespace std;
 #define MAX 20
+struct Node {
+  int x;
+  Node *pNext;
+};
+struct List {
+  Node *pHead, *pTail;
+};
+struct Queue{
+  List data;
+};
+void createList(List &l) {
+  l.pHead = NULL;
+  l.pTail = NULL;
+}
+Node* createNode(int x) {
+  Node *p = new Node;
+  if (p != NULL) {
+    p->x = x;
+    p->pNext = NULL;
+  }
+  return p;
+}
+void addTail(List &l, Node *p) {
+  if (l.pHead == NULL) {
+    l.pHead = p; l.pTail = p;
+  }
+  else {
+    l.pTail->pNext = p; l.pTail = p;
+  }
+}
+int removeHead(List &l) {
+  Node *p = l.pHead;
+  int r = 0;
+  if (l.pHead != NULL) {
+    l.pHead = p->pNext;
+    delete p;
+    r = 1;
+    if (l.pHead == NULL)
+      l.pTail = NULL;
+    }
+  return r;
+}
+void createQueue(Queue &q){
+  createList(q.data);
+}
+int isEmpty(Queue q){
+  return (q.data.pHead==NULL);
+}
+void enQueue(Queue &q,int x){
+  Node *p = createNode(x);
+  addTail(q.data,p);
+}
+void deQueue(Queue &q){
+  removeHead(q.data);
+}
+int frontQueue(Queue &q, int &x) {
+  if (isEmpty(q))
+    return 0;
+  x = q.data.pHead->x;
+  return 1;
+}
 void visit(int g[MAX][MAX], int n, int x, int label, int v[MAX]){
   v[x]=label;
   //cout<<x<<": "<<label<<endl;
@@ -45,6 +106,33 @@ void DFS(int grid[MAX][MAX], bool visited[], int n, int start){
       DFS(grid,visited,n,i);
     }
   }
+}
+void BFS(int grid[MAX][MAX],bool visited[], int n, int start)
+{
+     // Create a queue for BFS
+    Queue queue;
+    createQueue(queue);
+    // Mark the current node as visited and enqueue it
+    visited[start] = true;
+    enQueue(queue,start);
+
+    // 'i' will be used to get all adjacent
+    // vertices of a vertex
+    while(!isEmpty(queue))
+    {
+        // Dequeue a vertex from queue and print it
+        frontQueue(queue,start);
+        cout << start << " ";
+        deQueue(queue);
+        for (int i = 0; i <n; i++)
+        {
+            if (grid[start][i]==1&&!visited[i])
+            {
+                visited[i] = true;
+                enQueue(queue,i);
+            }
+        }
+    }
 }
 /*void printCircle (int grid[MAX][MAX], int node, int n){
   bool *visited = new bool [n];
@@ -132,15 +220,15 @@ int main(){
   int component = tpLienThong(graph,n,visit);
   cout<<"So thanh phan lien thong la: "<<component<<endl;
   bool checkCircle =  Circle(graph,component,visit,n);
-  if(checkCircle){
+  /*if(checkCircle){
     cout<<"Do thi co chu trinh"<<endl;
   }
   else
-    cout<<"Do thi khong co chu trinh"<<endl;
+    cout<<"Do thi khong co chu trinh"<<endl;*/
   bool *visited = new bool [n];
   for(int i=0;i<n;i++){
     visited[i]=false;
   }
-  DFS(graph,visited,n,0);
+  BFS(graph,visited,n,1);
   return 0;
 }
